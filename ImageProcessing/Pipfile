@@ -1,0 +1,27 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+numpy = "*"
+matplotlib = "*"
+flake8 = "*"
+flake8-builtins = "*"
+flake8-bugbear = "*"
+flake8-commas = "*"
+flake8-eradicate = "*"
+flake8-variables-names = "*"
+pep8-naming = "*"
+flake8-docstring-checker = "*"
+flake8-annotations = "*"
+flake8-nb = "*"
+flake8-import-order = "*"
+flake8-docstrings-complete = "*"
+flake8-clean-block = "*"
+opencv-python = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"
