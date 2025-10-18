@@ -57,6 +57,7 @@ def main() -> None:
 
     # Загрузка изображения
     image = cv2.imread(args.input)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     if image is None:
         print(f"Ошибка: не удалось загрузить изображение {args.input}")
         return
@@ -82,9 +83,9 @@ def main() -> None:
         output_path = f"{base}_result.png"
 
     # Сохранение результата
-    cv2.imwrite(output_path, result)
+    result_bgr = cv2.cvtColor(result, cv2.COLOR_RGB2BGR)
+    cv2.imwrite(output_path, result_bgr)
     print(f"Результат сохранён в {output_path}")
-
 
 if __name__ == "__main__":
     main()
