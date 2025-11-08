@@ -5,3 +5,7 @@ __pycache__/
 .idea/
 .vscode/
 *.log
+*.png
+processed_cats/
+results/
+test_images/

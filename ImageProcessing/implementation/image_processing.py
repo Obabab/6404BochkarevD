@@ -56,19 +56,15 @@ class ImageProcessing(IImageProcessing):
 
         return output
 
-    def _rgb_to_grayscale(self, image: np.ndarray) -> np.ndarray: # Вычисление яркости пикселя и перевод в серый
-        """
-        Преобразует RGB-изображение в оттенки серого.
-
-        Args:
-            image (np.ndarray): Входное RGB-изображение.
-
-        Returns:
-            np.ndarray: Одноканальное изображение в оттенках серого.
-        """
-        #broadcasting
-        return np.clip(0.299 * image[:, :, 0] + 0.587 * image[:, :, 1] + 0.114 * image[:, :, 2], 0, 255).astype(
-            np.float32) # взвешанная сумма  RGB каналов. массив приводится к типу float32
+    def _rgb_to_grayscale(self, image: np.ndarray) -> np.ndarray:
+        # если уже ч/б (2D), просто привести тип и вернуть
+        if image.ndim == 2:
+            return image.astype(np.float32)
+        # иначе обычная взвешенная сумма каналов
+        return np.clip(
+            0.299 * image[:, :, 0] + 0.587 * image[:, :, 1] + 0.114 * image[:, :, 2],
+            0, 255
+        ).astype(np.float32)
 
     def _gamma_correction(self, image: np.ndarray, gamma: float) -> np.ndarray:
         """
