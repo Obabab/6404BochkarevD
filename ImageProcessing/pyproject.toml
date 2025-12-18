@@ -16,7 +16,11 @@ dependencies = [
   "aiofiles",
   "numpy",
   "Pillow",
+<<<<<<< HEAD
+  "python-dotenv",
+=======
   "python-dotenv"
+>>>>>>> e927cf0b55258fa093bfaae1dac510882601af99
   "urllib3"
 ]
 

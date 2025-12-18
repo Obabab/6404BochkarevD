@@ -1,0 +1,7 @@
+requests
+aiohttp
+aiofiles
+numpy
+Pillow
+python-dotenv
+urllib3

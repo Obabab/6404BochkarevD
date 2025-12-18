@@ -1,0 +1,13 @@
+Metadata-Version: 2.4
+Name: imageprocessing-bochkarev-6404
+Version: 0.1.0
+Summary: Учебный пакет для обработки изображений кошек (лабораторная работа).
+Author: Bochkarev D.
+Requires-Python: >=3.10
+Requires-Dist: requests
+Requires-Dist: aiohttp
+Requires-Dist: aiofiles
+Requires-Dist: numpy
+Requires-Dist: Pillow
+Requires-Dist: python-dotenv
+Requires-Dist: urllib3

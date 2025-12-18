@@ -15,6 +15,7 @@ import random
 import functools
 from typing import List, Dict, Any
 
+import logging
 import asyncio
 from concurrent.futures import ProcessPoolExecutor
 
@@ -30,6 +31,9 @@ import numpy as np
 
 from .cat_image import ColorCatImage, GrayscaleCatImage
 
+logger = logging.getLogger("cat_app")
+
+
 # измеряет время работы
 def time_logger(func): 
     @functools.wraps(func)  # декоратор
@@ -37,7 +41,7 @@ def time_logger(func):
         t0 = time.time()
         result = func(*args, **kwargs)
         t1 = time.time()
-        print(f"Метод {func.__name__} выполнен за {t1 - t0:.4f} секунд")
+        logger.debug(f"Метод {func.__name__} выполнен за {t1 - t0:.4f} секунд")
         return result
     return wrapper
 
@@ -48,7 +52,7 @@ def process_image_worker(idx: int,
                          image_bytes: bytes) -> Dict[str, Any]:
    
     pid = os.getpid() # получение ID текущего процесса
-    print(f"Convolution for image {idx} started (PID {pid})")
+    logger.debug(f"Convolution for image {idx} started (PID {pid})")
 
     with Image.open(io.BytesIO(image_bytes)) as img: # декодировка байт в массив пикселей
         img = img.convert("RGB") # приведение к ргб
@@ -64,7 +68,7 @@ def process_image_worker(idx: int,
     custom_edges = cat_img.custom_edge_detection()
     lib_edges = cat_img.library_edge_detection()
 
-    print(f"Convolution for image {idx} finished (PID {pid})")
+    logger.debug(f"Convolution for image {idx} finished (PID {pid})")
 
     return {
         "idx": idx,
@@ -138,7 +142,7 @@ class CatImageProcessor:
         Сейчас не используется в асинхронном конвейере,
         оставлен для сравнения и отладки.
         """
-        print(f"[sync download] GET {url}")
+        logger.debug(f"[sync download] GET {url}")
         resp = self._session.get(url, timeout=(5, 20))
         resp.raise_for_status()
         with Image.open(io.BytesIO(resp.content)) as img:
@@ -166,7 +170,7 @@ class CatImageProcessor:
             try:
                 image_array = self.download_image(url)
             except Exception as e:
-                print(f"[sync skip] download failed: {url} -> {e}")
+                logger.warning(f"[sync skip] download failed: {url} -> {e}")
                 continue
 
             try:
@@ -176,7 +180,7 @@ class CatImageProcessor:
                 else:
                     cat_img = ColorCatImage(url, breed_name, image_array)
             except Exception as e:
-                print(f"[sync skip] prepare image failed: {url} -> {e}")
+                logger.warning(f"[sync skip] prepare image failed: {url} -> {e}")
                 continue
 
             original_path = os.path.join(
@@ -198,7 +202,7 @@ class CatImageProcessor:
                 lib_edges = cat_img.library_edge_detection()
                 Image.fromarray(lib_edges).save(lib_path)
             except Exception as e:
-                print(f"[sync warn] save/process failed: {url} -> {e}")
+                logger.warning(f"[sync warn] save/process failed: {url} -> {e}")
                 continue
 
     # Асинхронно-параллельный конвейер
@@ -235,11 +239,11 @@ class CatImageProcessor:
     
       #  Асинхронное скачивание одного изображения
       
-        print(f"Downloading image {idx} started")
+        logger.debug(f"Downloading image {idx} started")
         async with session.get(url, timeout=20) as resp: # гет запрос по url, максимум 20 секунд на запрос
             resp.raise_for_status() # Проверяет HTTP-статус. выбросит либо исключение, либо продолжит работу
             data = await resp.read() # асин операция. читает весь файл, возвращает байты картинки
-        print(f"Downloading image {idx} finished")
+        logger.debug(f"Downloading image {idx} finished")
         return data
 
     async def _save_result_async(
@@ -277,7 +281,7 @@ class CatImageProcessor:
             async with aiofiles.open(path, "wb") as f: # асинхронно открываем файл по пути path. запись в бинарном режиме
                 await f.write(data) # асинхронно записываем байты data в файл
 
-        print(f"Saving image {idx} started")
+        logger.debug(f"Saving image {idx} started")
 
         # составляем список тасков на запись трёх файлов
         tasks = [
@@ -286,10 +290,10 @@ class CatImageProcessor:
             save_array(lib_path, result["lib_edges"]),
         ]
 
-    
+        # гатером ожидаем окончания записи всех трёх файлов
         await asyncio.gather(*tasks)
 
-        print(f"Saving image {idx} finished")
+        logger.debug(f"Saving image {idx} finished")
 
 
     # Полный цикл обработки 
@@ -311,14 +315,14 @@ class CatImageProcessor:
         breed_name = task_info["breed_name"]
 
         if not url:
-            print(f"[skip] image {idx}: empty url")
+            logger.warning(f"[skip] image {idx}: empty url")
             return
 
         # 1) асинхронное скачивание
         try:
             image_bytes = await self._download_one_async(session, idx, url) # делает http запрос по url, читает ответ, возвращает байты картинки
         except Exception as e:
-            print(f"[skip] image {idx}: download failed -> {e}")
+            logger.warning(f"[skip] image {idx}: download failed -> {e}")
             return
 
         # 2) CPU-часть — в процессе
@@ -333,14 +337,14 @@ class CatImageProcessor:
                 image_bytes,
             )
         except Exception as e:
-            print(f"[skip] image {idx}: processing failed -> {e}")
+            logger.error(f"[skip] image {idx}: processing failed -> {e}")
             return
 
         # 3) асинхронное сохранение
         try:
             await self._save_result_async(output_dir, result)
         except Exception as e:
-            print(f"[warn] image {idx}: saving failed -> {e}")
+            logger.warning(f"[warn] image {idx}: saving failed -> {e}")
             return
 
     async def _process_and_save_async_impl(
