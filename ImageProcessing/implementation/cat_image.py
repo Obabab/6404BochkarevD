@@ -7,6 +7,7 @@
 from abc import ABC, abstractmethod
 import functools
 import time
+import logging
 import numpy as np
 
 from .image_processing import ImageProcessing
@@ -14,12 +15,14 @@ from def_implementation.def_image_processing import def_ImageProcessing
 
 
 def time_logger(func): # фабрика декораторов
+    logger = logging.getLogger("cat_app")  # используем общий логгер приложения
+
     @functools.wraps(func) # декоратор. для копии метаданных из функции func. С wraps они выглядят как оригинальная func
     def wrapper(*args, **kwargs): # Определяется внутренняя функция-обёртка. любые поз арг как кортеж. собирает произвольное число именованных аргументов в словарь
         start_time = time.time()
         result = func(*args, **kwargs)
         end_time = time.time()
-        print(f"Метод {func.__name__} выполнен за {end_time - start_time:.4f} секунд")
+        logger.debug(f"Метод {func.__name__} выполнен за {end_time - start_time:.4f} секунд")
         return result
     return wrapper 
 
@@ -80,6 +83,7 @@ class CatImage(ABC):
         raise TypeError(f"Unsupported type: {type(other)}")
 
     def __sub__(self, other: 'CatImage') -> 'CatImage':
+
         if isinstance(other, CatImage): # проверка правого операнда принадлежит ли он CatImage
             new_image = np.clip(self.image.astype(np.int32) - # переводим каналы из uint8 в знаковый тип большего разряда, чтобы не было переполнения по модулю 256
                                 other.image.astype(np.int32), 0, 255).astype(np.uint8)
@@ -105,18 +109,3 @@ class GrayscaleCatImage(CatImage):
             self._image = self.custom_processor._rgb_to_grayscale(image_array).astype(np.uint8) # перевод в черно-белое
             return self.image
         return image_array
-
-
-class Dog:
-    def sound(self):
-        return "Гав"
-
-class Cat:
-    def sound(self):
-        return "Мяу"
-
-def make_sound(animal):  
-    print(animal.sound())
-
-make_sound(Dog())  
-make_sound(Cat())  # Мяу

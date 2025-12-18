@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "imageprocessing-bochkarev-6404"
+version = "0.1.0"
+description = "Учебный пакет для обработки изображений кошек (лабораторная работа)."
+authors = [
+  { name = "Bochkarev D." }
+]
+requires-python = ">=3.10"
+dependencies = [
+  "requests",
+  "aiohttp",
+  "aiofiles",
+  "numpy",
+  "Pillow",
+  "python-dotenv",
+  "urllib3"
+]
+
+[tool.setuptools]
+packages = ["implementation", "def_implementation"]

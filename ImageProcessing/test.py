@@ -2,8 +2,8 @@ from PIL import Image
 import numpy as np
 from implementation.cat_image import ColorCatImage
 
-p1 = r"D:\6404_BochkarevD\ImageProcessing\processed_cats\Bombay\2_Bombay_original.png"
-p2 = r"D:\6404_BochkarevD\ImageProcessing\processed_cats\Havana Brown\1_Havana Brown_original.png"
+p1 = r"D:\6404_BochkarevD\ImageProcessing\processed_cats_async\American Bobtail\1_American Bobtail_original.png"
+p2 = r"D:\6404_BochkarevD\ImageProcessing\processed_cats_async\American Wirehair\3_American Wirehair_original.png"
 
 # Загружаем изображения и приводим ко всем одному размеру
 img1 = Image.open(p1).convert("RGB")
@@ -18,7 +18,7 @@ print(a)
 print(b)
 
 # Операции
-s = a + 100
+s = a + b
 d = a - b
 
 # Печатаем информацию о результатах

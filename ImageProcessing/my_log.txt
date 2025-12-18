@@ -1,0 +1,17 @@
+2025-12-12 16:45:46,685 [INFO] main.py:60 - Старт программы: получение метаданных изображений
+2025-12-12 16:45:49,223 [DEBUG] cat_image_processor.py:44 - Метод fetch_images выполнен за 2.5377 секунд
+2025-12-12 16:45:49,223 [INFO] main.py:79 - === Async + multiprocessing обработка ===
+2025-12-12 16:45:49,227 [DEBUG] cat_image_processor.py:242 - Downloading image 1 started
+2025-12-12 16:45:49,227 [DEBUG] cat_image_processor.py:242 - Downloading image 2 started
+2025-12-12 16:45:49,227 [DEBUG] cat_image_processor.py:242 - Downloading image 3 started
+2025-12-12 16:45:50,291 [DEBUG] cat_image_processor.py:246 - Downloading image 2 finished
+2025-12-12 16:45:50,673 [DEBUG] cat_image_processor.py:246 - Downloading image 3 finished
+2025-12-12 16:45:52,797 [DEBUG] cat_image_processor.py:246 - Downloading image 1 finished
+2025-12-12 16:46:05,189 [DEBUG] cat_image_processor.py:284 - Saving image 2 started
+2025-12-12 16:46:05,362 [DEBUG] cat_image_processor.py:296 - Saving image 2 finished
+2025-12-12 16:46:12,560 [DEBUG] cat_image_processor.py:284 - Saving image 1 started
+2025-12-12 16:46:12,638 [DEBUG] cat_image_processor.py:296 - Saving image 1 finished
+2025-12-12 16:46:57,976 [DEBUG] cat_image_processor.py:284 - Saving image 3 started
+2025-12-12 16:46:58,133 [DEBUG] cat_image_processor.py:296 - Saving image 3 finished
+2025-12-12 16:46:58,258 [INFO] main.py:86 - Обработка (async + multiprocessing) завершена за 69.04 секунд.
+2025-12-12 16:46:58,258 [INFO] main.py:90 - Программа успешно завершена.
